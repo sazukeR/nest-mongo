@@ -86,11 +86,20 @@ export class PokemonService {
   }
 
   async remove(id: string) {
+    // el problema de hacerlo asi es que si el usuario introduce un id mongo que no exista, igual enviara un estatus 200 dando un falso positivo. y si usamnos el findOne solucionariamos el problema pero estariamos haciendo una doble consulta a la base de datos. para solucionar este problema lo haremos con el deleteOne que nos ofrece un count con los datos eliminados, si la cuenta es 0 quiere decir que no elimino ningun registro pro lo tanto no existe el id, de esta forma podemos enviar un BadRequestException
 
-    const result = await this.pokemonModel.findByIdAndDelete( id );
+    const { deletedCount } = await this.pokemonModel.deleteOne({ _id: id });
+
+    if ( deletedCount === 0 ) {
+      throw new BadRequestException(`There not exist id ${ id }`)
+    }
+
+    return;
+
+  //  const result = await this.pokemonModel.findByIdAndDelete( id );
 
 
-    return result;
+   // return result;
     
 /*     const pokemon = await this.findOne(id);
     await pokemon.deleteOne(); */
