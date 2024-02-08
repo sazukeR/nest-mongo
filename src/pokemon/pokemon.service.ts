@@ -4,9 +4,15 @@ import { UpdatePokemonDto } from './dto/update-pokemon.dto';
 import { Pokemon } from './entities/pokemon.entity';
 import { Model, isValidObjectId } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
+import { Result } from 'src/seed/interfaces/poke-response.interface';
+import { PaginatioDto } from 'src/common/dto/pagination.dto';
 
 @Injectable()
 export class PokemonService {
+
+
+  private pokenons: Result[] = []
+
 
   constructor(
     @InjectModel( Pokemon.name ) // el nombre del modelo que queremos usar
@@ -28,14 +34,24 @@ export class PokemonService {
 
     } catch (error) {
       
-      this.handleExceptions( error )
+      this.handleExceptions( error );
 
     }
 
   }
 
-  findAll() {
-    return `This action returns all pokemon`;
+  async findAll( paginationDto: PaginatioDto ) {
+
+    const {limit = 10, offset = 0} = paginationDto;
+
+
+    return await this.pokemonModel.find()
+    .limit(limit)
+    .skip(offset)
+    .sort({
+      no: 1
+    })
+    .select('-__v')
   }
 
   async findOne(term: string) {

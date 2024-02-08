@@ -10,8 +10,12 @@ async function bootstrap() {
   // para tener las validaciones de class validator de forma global
   app.useGlobalPipes(
     new ValidationPipe({ 
-  whitelist: true,
-  forbidNonWhitelisted: true, 
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+      transformOptions: {
+        enableImplicitConversion: true,
+      }
     })
   )
 
